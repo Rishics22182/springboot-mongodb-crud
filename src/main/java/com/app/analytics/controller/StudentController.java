@@ -1,9 +1,11 @@
 package com.app.analytics.controller;
 
 import com.app.analytics.dto.GetStudentDto;
+import com.app.analytics.dto.StudentResponseDTO;
 import com.app.analytics.model.Student;
 import com.app.analytics.service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -34,7 +37,7 @@ public class StudentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<GetStudentDto>> getAllStudent() {
+    public ResponseEntity<List<StudentResponseDTO>> getAllStudent() {
         return ResponseEntity.ok(studentService.getStudents());
     }
 
@@ -140,4 +143,24 @@ public class StudentController {
         }
     }
 
+    @GetMapping("/export/csv")
+    public void exportCsv(HttpServletResponse response) throws IOException {
+        response.setContentType("text/csv");
+        response.setHeader(
+                "Content-Disposition",
+                "attachment; filename=student.csv"
+        );
+        PrintWriter writer = response.getWriter();
+        writer.println("Name,City,Age,Url");
+        for (StudentResponseDTO stu : studentService.getStudents()) {
+            writer.println(
+                    stu.getName() + "," +
+                            stu.getCity() + "," +
+                            stu.getAge() + "," +
+                            stu.getProfileImageUrl()
+            );
+        }
+        writer.flush();
+        writer.close();
+    }
 }
