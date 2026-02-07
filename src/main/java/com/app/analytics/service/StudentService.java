@@ -33,4 +33,11 @@ public class StudentService {
         return results.getMappedResults();
     }
 
+    public void saveProfileImageKey(String id, String fileName) {
+        Student student = studentRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Student not found"));
+        student.setProfileImageKey(fileName);
+        studentRepo.save(student);
+    }
+
 }
