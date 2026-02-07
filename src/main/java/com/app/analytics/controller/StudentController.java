@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -30,5 +31,10 @@ public class StudentController {
     public ResponseEntity<List<GetStudentDto>> getAllStudent(){
         return ResponseEntity.ok(studentService.getStudents());
     }
-}//naa
 
+    @PostMapping("/upload")
+    public ResponseEntity<String> uploadfile(@RequestParam("file") MultipartFile file){
+        System.out.println(file.getOriginalFilename());
+        return ResponseEntity.ok(file.getOriginalFilename());
+    }
+}
